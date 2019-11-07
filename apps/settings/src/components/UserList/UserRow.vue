@@ -57,28 +57,32 @@
 		<!-- dirty hack to ellipsis on two lines -->
 		<div class="name">
 			{{ user.id }}
-		</div>
-		<form class="displayName" :class="{'icon-loading-small': loading.displayName}" @submit.prevent="updateDisplayName">
-			<template v-if="user.backendCapabilities.setDisplayName">
-				<input v-if="user.backendCapabilities.setDisplayName"
-					:id="'displayName'+user.id+rand"
-					ref="displayName"
-					type="text"
-					:disabled="loading.displayName||loading.all"
-					:value="user.displayname"
-					autocomplete="new-password"
-					autocorrect="off"
-					autocapitalize="off"
-					spellcheck="false">
-				<input v-if="user.backendCapabilities.setDisplayName"
-					type="submit"
-					class="icon-confirm"
-					value="">
-			</template>
-			<div v-else v-tooltip.auto="t('settings', 'The backend does not support changing the display name')" class="name">
+			<div class="displayName">
+				<form v-if="false"
+					class="displayName"
+					:class="{'icon-loading-small': loading.displayName}"
+					@submit.prevent="updateDisplayName">
+					<template v-if="user.backendCapabilities.setDisplayName">
+						<input
+							:id="'displayName'+user.id+rand"
+							ref="displayName"
+							type="text"
+							:disabled="loading.displayName||loading.all"
+							:value="user.displayname"
+							autocomplete="new-password"
+							autocorrect="off"
+							autocapitalize="off"
+							spellcheck="false">
+						<input
+							type="submit"
+							class="icon-confirm"
+							value="">
+					</template>
+					<div v-else v-tooltip.auto="t('settings', 'The backend does not support changing the display name')" class="name" />
+				</form>
 				{{ user.displayname }}
 			</div>
-		</form>
+		</div>
 		<form v-if="settings.canChangePassword && user.backendCapabilities.setPassword"
 			class="password"
 			:class="{'icon-loading-small': loading.password}"
@@ -548,10 +552,10 @@ export default {
 		},
 
 		/**
-		 * Create a new group and add user to it
-		 *
-		 * @param {string} gid Group id
-		 */
+		* Create a new group and add user to it
+		*
+		* @param {string} gid Group id
+		*/
 		async createGroup(gid) {
 			this.loading = { groups: true, subadmins: true }
 			try {
