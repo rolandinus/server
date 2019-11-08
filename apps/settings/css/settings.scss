@@ -1343,7 +1343,7 @@ doesnotexist:-o-prefocus, .strengthify-wrapper {
 /* USERS LIST -------------------------------------------------------------- */
 #body-settings {
 	$grid-row-height: 60px;
-	$grid-col-min-width: 210px;
+	$grid-col-min-width: 150px;
 	#app-content.user-list-grid {
 		display: grid;
 		grid-auto-columns: 1fr;
@@ -1463,7 +1463,7 @@ doesnotexist:-o-prefocus, .strengthify-wrapper {
 			> div,
 			> form {
 				grid-row: 1;
-				display: block;
+				display: inline-flex;
 				align-items: center;
 				color: var(--color-text-lighter);
 				position: relative;
@@ -1538,6 +1538,7 @@ doesnotexist:-o-prefocus, .strengthify-wrapper {
 					}
 					.toggleUserActions {
 						position: relative;
+						display: flex;
 						.icon-more {
 							width: 44px;
 							height: 44px;

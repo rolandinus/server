@@ -42,6 +42,26 @@
 	</div>
 
 	<!-- User full data -->
+	<UserRowSimple
+		v-else-if="!editing"
+		:generate-avatar="generateAvatar"
+		:loading="loading"
+		:show-config="showConfig"
+		:user="user"
+		:user-groups="userGroups"
+		:user-sub-admins-groups="userSubAdminsGroups"
+		:used-quota="usedQuota"
+		:user-language="userLanguage"
+		:user-backend="userBackend"
+		:user-last-login="userLastLogin"
+		:user-actions="userActions"
+		:opened-menu="openedMenu"
+		:feedback-message="feedbackMessage"
+		:sub-admins-groups="subAdminsGroups"
+		:settings="settings"
+		@hideMenu="hideMenu"
+		@toggleMenu="toggleMenu"
+		@edit="editing = true" />
 	<div v-else
 		class="row"
 		:class="{'disabled': loading.delete || loading.disable}"
@@ -55,33 +75,29 @@
 				:srcset="generateAvatar(user.id, 64)+' 2x, '+generateAvatar(user.id, 128)+' 4x'">
 		</div>
 		<!-- dirty hack to ellipsis on two lines -->
-		<div class="name">
-			{{ user.id }}
-			<div class="displayName">
-				<form v-if="false"
-					class="displayName"
-					:class="{'icon-loading-small': loading.displayName}"
-					@submit.prevent="updateDisplayName">
-					<template v-if="user.backendCapabilities.setDisplayName">
-						<input
-							:id="'displayName'+user.id+rand"
-							ref="displayName"
-							type="text"
-							:disabled="loading.displayName||loading.all"
-							:value="user.displayname"
-							autocomplete="new-password"
-							autocorrect="off"
-							autocapitalize="off"
-							spellcheck="false">
-						<input
-							type="submit"
-							class="icon-confirm"
-							value="">
-					</template>
-					<div v-else v-tooltip.auto="t('settings', 'The backend does not support changing the display name')" class="name" />
-				</form>
-				{{ user.displayname }}
-			</div>
+		<div class="displayName">
+			<form
+				class="displayName"
+				:class="{'icon-loading-small': loading.displayName}"
+				@submit.prevent="updateDisplayName">
+				<template v-if="user.backendCapabilities.setDisplayName">
+					<input v-if="user.backendCapabilities.setDisplayName"
+						:id="'displayName'+user.id+rand"
+						ref="displayName"
+						type="text"
+						:disabled="loading.displayName||loading.all"
+						:value="user.displayname"
+						autocomplete="new-password"
+						autocorrect="off"
+						autocapitalize="off"
+						spellcheck="false">
+					<input v-if="user.backendCapabilities.setDisplayName"
+						type="submit"
+						class="icon-confirm"
+						value="">
+				</template>
+				<div v-else v-tooltip.auto="t('settings', 'The backend does not support changing the display name')" class="name" />
+			</form>
 		</div>
 		<form v-if="settings.canChangePassword && user.backendCapabilities.setPassword"
 			class="password"
@@ -197,6 +213,11 @@
 		</div>
 		<div class="userActions">
 			<div v-if="OC.currentUser !== user.id && user.id !== 'admin' && !loading.all" class="toggleUserActions">
+				<Actions>
+					<ActionButton icon="icon-checkmark" @click="editing = false">
+						{{ t('settings', 'Done') }}
+					</ActionButton>
+				</Actions>
 				<div v-click-outside="hideMenu" class="icon-more" @click="toggleMenu" />
 				<div class="popovermenu" :class="{ 'open': openedMenu }">
 					<PopoverMenu :menu="userActions" />
@@ -214,14 +235,18 @@
 import ClickOutside from 'vue-click-outside'
 import Vue from 'vue'
 import VTooltip from 'v-tooltip'
-import { PopoverMenu, Multiselect } from 'nextcloud-vue'
+import { PopoverMenu, Multiselect, Actions, ActionButton } from 'nextcloud-vue'
+import UserRowSimple from './UserRowSimple'
 
 Vue.use(VTooltip)
 
 export default {
 	name: 'UserRow',
 	components: {
+		UserRowSimple,
 		PopoverMenu,
+		Actions,
+		ActionButton,
 		Multiselect
 	},
 	directives: {
@@ -266,6 +291,7 @@ export default {
 			rand: parseInt(Math.random() * 1000),
 			openedMenu: false,
 			feedbackMessage: '',
+			editing: false,
 			loading: {
 				all: false,
 				displayName: false,
@@ -552,9 +578,9 @@ export default {
 		},
 
 		/**
-		* Create a new group and add user to it
-		*
-		* @param {string} gid Group id
+		 * Create a new group and add user to it
+		 *
+		 * @param {string} gid Group id
 		*/
 		async createGroup(gid) {
 			this.loading = { groups: true, subadmins: true }
