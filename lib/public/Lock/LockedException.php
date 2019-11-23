@@ -7,7 +7,6 @@ declare(strict_types=1);
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Vincent Petry <pvince81@owncloud.com>
- * @author Maxence Lange <maxence@artificial-owl.com>
  *
  * @license AGPL-3.0
  *
@@ -43,31 +42,20 @@ class LockedException extends \Exception {
 	private $path;
 
 	/**
-	 * estimated timeout for the lock
-	 *
-	 * @var int
-	 * @since 18.0.0
-	 */
-	private $timeout = -1;
-
-	/**
 	 * LockedException constructor.
 	 *
 	 * @param string $path locked path
 	 * @param \Exception|null $previous previous exception for cascading
 	 * @param string $existingLock since 14.0.0
-	 * @param int $timeout since 18.0.0
-	 *
 	 * @since 8.1.0
 	 */
-	public function __construct(string $path, \Exception $previous = null, string $existingLock = null, int $timeout = -1) {
+	public function __construct(string $path, \Exception $previous = null, string $existingLock = null) {
 		$message = '"' . $path . '" is locked';
 		if ($existingLock) {
 			$message .= ', existing lock on file: ' . $existingLock;
 		}
 		parent::__construct($message, 0, $previous);
 		$this->path = $path;
-		$this->timeout = $timeout;
 	}
 
 	/**
@@ -77,14 +65,4 @@ class LockedException extends \Exception {
 	public function getPath(): string {
 		return $this->path;
 	}
-
-
-	/**
-	 * @return int
-	 * @since 18.0.0
-	 */
-	public function getTimeout(): int {
-		return $this->timeout;
-	}
-
 }
