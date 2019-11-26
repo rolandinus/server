@@ -31,7 +31,10 @@
 			</ul>
 		</AppNavigation>
 		<AppContent class="app-settings-content" :class="{ 'icon-loading': loadingList }">
-			<AppList :category="category" :app="currentApp" :search="searchQuery" />
+			<AppList v-if="!loadingList"
+				:category="category"
+				:app="currentApp"
+				:search="searchQuery" />
 		</AppContent>
 		<AppSidebar v-if="id && currentApp" @close="hideAppDetails">
 			<AppDetails :category="category" :app="currentApp" />
