@@ -32,6 +32,13 @@ namespace OCP\Lock;
 class TemporaryLockedException extends LockedException {
 
 	/**
+	 * owner of the lock
+	 *
+	 * @var string
+	 */
+	private $owner = '';
+
+	/**
 	 * estimated timeout for the lock
 	 *
 	 * @var int
@@ -45,12 +52,14 @@ class TemporaryLockedException extends LockedException {
 	 * @param string $path locked path
 	 * @param \Exception|null $previous previous exception for cascading
 	 * @param string $existingLock
+	 * @param string $owner
 	 * @param int $timeout
 	 *
 	 * @since 18.0.0
 	 */
-	public function __construct(string $path, \Exception $previous = null, string $existingLock = null, int $timeout = -1) {
+	public function __construct(string $path, \Exception $previous = null, string $existingLock = null, string $owner = '', int $timeout = -1) {
 		parent::__construct($path, $previous, $existingLock);
+		$this->owner = $owner;
 		$this->timeout = $timeout;
 	}
 
@@ -61,6 +70,14 @@ class TemporaryLockedException extends LockedException {
 	 */
 	public function getTimeout(): int {
 		return $this->timeout;
+	}
+
+	/**
+	 * @return string
+	 * @since 18.0.0
+	 */
+	public function getOwner(): string {
+		return $this->owner;
 	}
 
 }
