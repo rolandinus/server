@@ -460,11 +460,11 @@ class Manager extends PublicEmitter implements IUserManager {
 			->andWhere($queryBuilder->expr()->eq('configkey', $queryBuilder->createNamedParameter('enabled')))
 			->andWhere($queryBuilder->expr()->eq('configvalue', $queryBuilder->createNamedParameter('false'), IQueryBuilder::PARAM_STR));
 
-		
+
 		$result = $queryBuilder->execute();
 		$count = $result->fetchColumn();
 		$result->closeCursor();
-		
+
 		if ($count !== false) {
 			$count = (int)$count;
 		} else {
@@ -494,7 +494,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		$result = $queryBuilder->execute();
 		$count = $result->fetchColumn();
 		$result->closeCursor();
-		
+
 		if ($count !== false) {
 			$count = (int)$count;
 		} else {
@@ -611,10 +611,18 @@ class Manager extends PublicEmitter implements IUserManager {
 	private function verifyUid(string $uid): bool {
 		$appdata = 'appdata_' . $this->config->getSystemValueString('instanceid');
 
-		if ($uid === '.htaccess' || $uid === 'files_external' || $uid === '.ocdata' || $uid === 'owncloud.log' || $uid === 'nextcloud.log' || $uid === $appdata) {
+		if (\in_array($uid, [
+			'.htaccess',
+			'files_external',
+			'.ocdata',
+			'owncloud.log',
+			'nextcloud.log',
+			$appdata], true)) {
 			return false;
 		}
 
-		return true;
+		$dataDirectory = $this->config->getSystemValueString('datadirectory', \OC::$SERVERROOT . '/data');
+
+		return !file_exists(rtrim($dataDirectory, '/') . '/' . $uid);
 	}
 }
