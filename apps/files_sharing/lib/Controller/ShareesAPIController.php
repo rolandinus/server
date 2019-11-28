@@ -140,6 +140,11 @@ class ShareesAPIController extends OCSController {
 	 */
 	public function search(string $search = '', string $itemType = null, int $page = 1, int $perPage = 200, $shareType = null, bool $lookup = true): DataResponse {
 
+		// In global scale mode we always search the loogup server
+		if ($this->config->getSystemValueBool('gs.enabled', false)) {
+			$lookup = true;
+		}
+
 		// only search for string larger than a given threshold
 		$threshold = (int)$this->config->getSystemValue('sharing.minSearchStringLength', 0);
 		if (strlen($search) < $threshold) {
