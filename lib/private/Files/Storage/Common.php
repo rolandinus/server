@@ -535,7 +535,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 			}
 		}
 
-		if (isset($fileName[255])) {
+		if (isset($fileName[250])) {
 			throw new FileNameTooLongException();
 		}
 
